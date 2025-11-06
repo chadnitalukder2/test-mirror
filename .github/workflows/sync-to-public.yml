@@ -3,7 +3,7 @@ name: Sync Public Mirror
 on:
   push:
     branches:
-      - release
+      - release  # Trigger on pushes to the release branch
 
 jobs:
   sync-public:
@@ -13,19 +13,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.PUBLIC_REPO_TOKEN }}
-          fetch-depth: 0
+          fetch-depth: 0  # Fetch full history for force-push
 
       - name: Configure Git
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-
-      - name: Create clean working directory
-        run: |
-          # Create a temporary branch without .github/workflows
-          git checkout -b temp-sync-branch
-          git rm -r --cached .github/workflows
-          git commit -m "Remove .github/workflows directory [skip ci]" || true
 
       - name: Add public remote
         run: |
@@ -33,4 +26,4 @@ jobs:
 
       - name: Force push to public release branch
         run: |
-          git push public temp-sync-branch:release --force
+          git push public HEAD:release --force
