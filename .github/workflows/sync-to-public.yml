@@ -3,17 +3,19 @@ name: Sync Public Mirror
 on:
   push:
     branches:
-      - release  # Trigger on pushes to the release branch
+      - release
 
 jobs:
   sync-public:
+    # Only run in the private repository
+    if: github.repository == 'csesumonpro/test'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout private repo
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.PUBLIC_REPO_TOKEN }}
-          fetch-depth: 0  # Fetch full history for force-push
+          fetch-depth: 0
 
       - name: Configure Git
         run: |
